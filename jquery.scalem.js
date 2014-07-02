@@ -16,10 +16,9 @@
         referenceWidthOffset: 0     /* Sets the width to subtract from reference element's width for calculating new CSS values */,
         doNotExceedOriginal: false  /* Limits the maximum value of the font size to the original value */
       }, oOptions),
-      updateStyles = function(o, e) {
+      updateStyles = function(o, e, origFontSize) {
         var $o = $(o),
           /* Create clone to get true text width */
-          origFontSize = parseInt($o.css('font-size').replace('px','')),
           $o2 = $o.clone().css({
             'width': 'auto',
             'display': 'none',
@@ -55,7 +54,6 @@
             break;
           }
         }
-        console.log(newFontSize, origFontSize);
         if (oSettings.doNotExceedOriginal) {
           newFontSize = Math.min(newFontSize, origFontSize);
         }
@@ -75,13 +73,14 @@
       };
     return this.each(function() {
       // This scope required for resize handler
-      var o = this;
+      var o = this,
+        origFontSize = parseInt($(o).css('font-size').replace('px',''));
       // Update CSS styles upon resize
       $(window).resize(function(e) {
-        updateStyles(o, e);
+        updateStyles(o, e, origFontSize);
       });
       // Set font size on load
-      updateStyles(o);
+      updateStyles(o, null, origFontSize);
     });
   };
 }(jQuery));
